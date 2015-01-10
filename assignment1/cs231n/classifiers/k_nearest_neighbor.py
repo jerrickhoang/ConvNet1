@@ -66,7 +66,7 @@ class KNearestNeighbor:
         # Compute the l2 distance between the ith test point and the jth    #
         # training point, and store the result in dists[i, j]               #
         #####################################################################
-        pass
+        dists[i][j] = np.linalg.norm(self.X_train[j, :] - X[i, :])
         #####################################################################
         #                       END OF YOUR CODE                            #
         #####################################################################
