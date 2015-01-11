@@ -90,7 +90,22 @@ def svm_loss_vectorized(W, X, y, reg):
   # to reuse some of the intermediate values that you used to compute the     #
   # loss.                                                                     #
   #############################################################################
-  pass
+  scores_to_be_considered = (scores - correct_scores + 1) > 0
+  negative_effect = np.sum(scores_to_be_considered, axis=0) * X
+  # TODO (jerrickhoang): haven't really figured out the vectorized version. 
+  # doing the iterative version for now.
+  for i in xrange(X.shape[1]):
+    scores = W.dot(X[:, i])
+    correct_class_score = scores[y[i]]
+    for j in xrange(W.shape[0]):
+      if j == y[i]:
+        continue
+      margin = scores[j] - correct_class_score + 1 # note delta = 1
+      if margin > 0:
+        dW[j, :] += X[:, i].T
+        dW[y[i], :] += - X[:, i].T
+  dW /= X.shape[1]
+  dW += reg * W
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
