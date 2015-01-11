@@ -34,9 +34,9 @@ def softmax_loss_naive(W, X, y, reg):
       total_probs += np.exp(scores[j])
     for j in range(num_classes):
       p_j_given_i = np.exp(scores[j]) / total_probs
-      margin = - p_j_given_i * X[:, i]
+      margin = - p_j_given_i * X[:, i].T
       if j == y[i]:
-        margin = (1 - p_j_given_i) * X[:, i]
+        margin = (1 - p_j_given_i) * X[:, i].T
       dW[j, :] += - margin
     loss += - np.log(np.exp(scores[y[i]]) / total_probs)
   loss /= num_trains
