@@ -16,7 +16,7 @@ def softmax_loss_naive(W, X, y, reg):
   """
   # Initialize the loss and gradient to zero.
   loss = 0.0
-  dW = np.zeros_like(W)
+  dW = np.zeros_like(W, dtype='float')
 
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using explicit loops.     #
@@ -37,7 +37,7 @@ def softmax_loss_naive(W, X, y, reg):
       margin = - p_j_given_i * X[:, i].T
       if j == y[i]:
         margin = (1 - p_j_given_i) * X[:, i].T
-      dW[j, :] += - margin
+      dW[j, :] += -margin
     loss += - np.log(np.exp(scores[y[i]]) / total_probs)
   loss /= num_trains
   dW /= num_trains
@@ -69,12 +69,20 @@ def softmax_loss_vectorized(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
+
+  # Loss.
   scores = W.dot(X)
   scores -= np.max(scores, axis=0)
   correct_scores = scores[y, np.arange(len(y))]
   loss = - np.mean(np.log(np.exp(correct_scores) / np.sum(np.exp(scores), axis=0)))
   loss += 0.5 * reg * np.sum(W * W)
 
+  # Gradient.
+  neg_probs = - np.exp(scores) / np.sum(np.exp(scores), axis=0)
+  neg_probs[y, np.arange(len(y))] += 1
+  dW = neg_probs.dot(X.T)
+  dW /= -X.shape[1]
+  dW += reg * W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
