@@ -80,7 +80,9 @@ def two_layer_net(X, model, y=None, reg=0.0):
   # Store the result in the scores variable, which should be an array of      #
   # shape (N, C).                                                             #
   #############################################################################
-  pass
+  h = X.dot(W1) + b1
+  h[h < 0] = 0 # RELU
+  scores = h.dot(W2) + b2
   #############################################################################
   #                              END OF YOUR CODE                             #
   #############################################################################
@@ -98,7 +100,10 @@ def two_layer_net(X, model, y=None, reg=0.0):
   # classifier loss. So that your results match ours, multiply the            #
   # regularization loss by 0.5                                                #
   #############################################################################
-  pass
+  scores -= np.max(scores, axis=1) # for numerical stability.
+  correct_scores = scores[np.arange(len(y)), y]
+  loss = - np.mean(np.log(np.exp(correct_scores) / np.sum(np.exp(scores), axis=1)))
+  loss += 0.5 * reg * np.sum(W1 * W1) + 0.5 * reg * np.sum(W2 * W2)
   #############################################################################
   #                              END OF YOUR CODE                             #
   #############################################################################
