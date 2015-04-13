@@ -100,9 +100,10 @@ def two_layer_net(X, model, y=None, reg=0.0):
   # classifier loss. So that your results match ours, multiply the            #
   # regularization loss by 0.5                                                #
   #############################################################################
-  scores -= np.max(scores, axis=1) # for numerical stability.
+  normal_const = np.sum(np.exp(scores), axis=1)
+  #scores = (scores.T - np.max(scores.T, axis=0)).T # for numerical stability.
   correct_scores = scores[np.arange(len(y)), y]
-  loss = - np.mean(np.log(np.exp(correct_scores) / np.sum(np.exp(scores), axis=1)))
+  loss = np.mean(- correct_scores + np.log(normal_const))
   loss += 0.5 * reg * np.sum(W1 * W1) + 0.5 * reg * np.sum(W2 * W2)
   #############################################################################
   #                              END OF YOUR CODE                             #
@@ -110,12 +111,23 @@ def two_layer_net(X, model, y=None, reg=0.0):
 
   # compute the gradients
   grads = {}
+  dscores_correct_scores = np.zeros(scores.shape)
+  dscores_correct_scores[np.arange(len(y)), y] = 1
+  dscores = (np.exp(scores).T / normal_const).T - dscores_correct_scores
+  dscores /= N
+  drelu = dscores.dot(W2.T)
+  dh = drelu * (h > 0)
   #############################################################################
   # TODO: Compute the backward pass, computing the derivatives of the weights #
   # and biases. Store the results in the grads dictionary. For example,       #
   # grads['W1'] should store the gradient on W1, and be a matrix of same size #
   #############################################################################
-  pass
+  grads['W2'] = h.T.dot(dscores) + reg * W2
+  grads['b2'] = np.sum(dscores, axis=0)
+  grads['W1'] = X.T.dot(dh) + reg * W1
+  grads['b1'] = np.sum(dh, axis=0)
+
+  
   #############################################################################
   #                              END OF YOUR CODE                             #
   #############################################################################
