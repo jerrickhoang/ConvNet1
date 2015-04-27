@@ -1,4 +1,5 @@
 import numpy as np
+from im2col import *
 
 def affine_forward(x, w, b):
   """
@@ -139,7 +140,19 @@ def conv_forward_naive(x, w, b, conv_param):
   # TODO: Implement the convolutional forward pass.                           #
   # Hint: you can use the function np.pad for padding.                        #
   #############################################################################
-  pass
+  N, C, H, W = x.shape
+  F, C, HH, WW = w.shape
+  pad, stride = conv_param['pad'], conv_param['stride']
+  x_stretched = im2col_indices(x, HH, WW, padding=pad, stride=stride)
+  w_stretched = im2col_indices(w, HH, WW, padding=0, stride=1)
+  H_prime = 1 + (H + 2*pad - HH) / stride
+  W_prime = 1 + (W + 2*pad - WW) / stride
+  out_shape = (N, F, H_prime, W_prime)
+  out = col2im_indices(w_stretched.T.dot(x_stretched) + b[:,np.newaxis], out_shape, 
+                       field_height=1, field_width=1, padding=0, 
+                       stride=1)
+
+
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
