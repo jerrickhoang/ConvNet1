@@ -12,7 +12,7 @@ def random_flips(X):
   - An array of the same shape as X, containing a copy of the data in X,
     but with half the examples flipped along the horizontal direction.
   """
-  out = None
+  out = np.zeros_like(X)
   #############################################################################
   # TODO: Implement the random_flips function. Store the result in out.       #
   #############################################################################
@@ -40,13 +40,12 @@ def random_crops(X, crop_shape):
   assert HH < H and WW < W
 
   out = np.zeros((N, C, HH, WW), dtype=X.dtype)
-  #############################################################################
-  # TODO: Implement the random_crops function. Store the result in out.       #
-  #############################################################################
-  pass
-  #############################################################################
-  #                           END OF YOUR CODE                                #
-  #############################################################################
+  
+  x0 = np.random.randint(W - WW)
+  y0 = np.random.randint(H - HH)
+  x1 = x0 + WW
+  y1 = y0 + HH
+  out = X[:, :, y0:y1, x0:x1]
 
   return out
 
@@ -70,13 +69,9 @@ def random_contrast(X, scale=(0.8, 1.2)):
   N = X.shape[0]
   out = np.zeros_like(X)
 
-  #############################################################################
-  # TODO: Implement the random_contrast function. Store the result in out.    #
-  #############################################################################
-  pass
-  #############################################################################
-  #                           END OF YOUR CODE                                #
-  #############################################################################
+  #scale_matrix = np.random.uniform(scale, X.shape)
+  #out = np.copy(X)
+  #out *= scale_matrix
   
   return out
 
