@@ -13,6 +13,7 @@ def random_flips(X):
     but with half the examples flipped along the horizontal direction.
   """
   out = np.zeros_like(X)
+  print X.shape
   #############################################################################
   # TODO: Implement the random_flips function. Store the result in out.       #
   #############################################################################
@@ -92,16 +93,13 @@ def random_tint(X, scale=(-10, 10)):
     of X[i].
   """
   low, high = scale
-  N, C = X.shape[:2]
+  N, C, W, H = X.shape
   out = np.zeros_like(X)
 
-  #############################################################################
-  # TODO: Implement the random_tint function. Store the result in out.        #
-  #############################################################################
-  pass
-  #############################################################################
-  #                           END OF YOUR CODE                                #
-  #############################################################################
+  tint_matrix = np.random.randint(low, high, (N, C, 1, 1))
+  tint_matrix = np.tile(tint_matrix, (1, 1, W, H))
+  out = np.copy(X)
+  out += tint_matrix
 
   return out
 
