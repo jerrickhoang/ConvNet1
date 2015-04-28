@@ -111,17 +111,8 @@ def dropout_forward(x, dropout_param):
     out = np.copy(x)
     mask = (rand_matrix < 1-p)
     out[mask] = 0
-    ###########################################################################
-    #                            END OF YOUR CODE                             #
-    ###########################################################################
   elif mode == 'test':
-    ###########################################################################
-    # TODO: Implement the test phase forward pass for inverted dropout.       #
-    ###########################################################################
     out = np.copy(x)
-    ###########################################################################
-    #                            END OF YOUR CODE                             #
-    ###########################################################################
 
   cache = (dropout_param, mask)
   out = out.astype(x.dtype, copy=False)
@@ -140,14 +131,8 @@ def dropout_backward(dout, cache):
   dropout_param, mask = cache
   mode = dropout_param['mode']
   if mode == 'train':
-    ###########################################################################
-    # TODO: Implement the training phase forward pass for inverted dropout.   #
-    # Store the dropout mask in the mask variable.                            #
-    ###########################################################################
-    pass
-    ###########################################################################
-    #                            END OF YOUR CODE                             #
-    ###########################################################################
+    dx = np.copy(dout)
+    dx[mask] = 0
   elif mode == 'test':
     dx = dout
   return dx
