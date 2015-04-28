@@ -13,14 +13,11 @@ def random_flips(X):
     but with half the examples flipped along the horizontal direction.
   """
   out = np.zeros_like(X)
-  print X.shape
-  #############################################################################
-  # TODO: Implement the random_flips function. Store the result in out.       #
-  #############################################################################
-  pass
-  #############################################################################
-  #                           END OF YOUR CODE                                #
-  #############################################################################
+  N = X.shape[0]
+  first_half = np.copy(X[:N/2,:,:,:])
+  second_half = np.copy(X[N/2:,:,:])
+  first_half = first_half[:,:,::-1,:]
+  out = np.vstack((first_half, second_half))
   return out
 
 
