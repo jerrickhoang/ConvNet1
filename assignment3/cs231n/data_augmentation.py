@@ -16,7 +16,7 @@ def random_flips(X):
   N = X.shape[0]
   first_half = np.copy(X[:N/2,:,:,:])
   second_half = np.copy(X[N/2:,:,:])
-  first_half = first_half[:,:,::-1,:]
+  first_half = first_half[:,:,:,::-1]
   out = np.vstack((first_half, second_half))
   return out
 
