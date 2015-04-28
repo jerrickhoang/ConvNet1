@@ -69,9 +69,9 @@ def random_contrast(X, scale=(0.8, 1.2)):
   N = X.shape[0]
   out = np.zeros_like(X)
 
-  #scale_matrix = np.random.uniform(scale, X.shape)
-  #out = np.copy(X)
-  #out *= scale_matrix
+  scale_matrix = np.random.rand(*X.shape) * (high-low) + low
+  out = np.copy(X)
+  out *= scale_matrix
   
   return out
 
