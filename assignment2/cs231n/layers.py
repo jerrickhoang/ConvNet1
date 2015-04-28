@@ -148,8 +148,8 @@ def conv_forward_naive(x, w, b, conv_param):
   H_prime = 1 + (H + 2*pad - HH) / stride
   W_prime = 1 + (W + 2*pad - WW) / stride
   out_shape = (N, F, H_prime, W_prime)
-  out = col2im_indices(w_stretched.T.dot(x_stretched) + b[:,np.newaxis], out_shape, 
-                       field_height=1, field_width=1, padding=0, 
+  out = col2im_indices(w_stretched.T.dot(x_stretched) + b[:,np.newaxis], 
+                       out_shape, field_height=1, field_width=1, padding=0, 
                        stride=1)
 
 
@@ -177,7 +177,21 @@ def conv_backward_naive(dout, cache):
   #############################################################################
   # TODO: Implement the convolutional backward pass.                          #
   #############################################################################
-  pass
+  x, w, b, conv_param = cache
+  N, C, H, W = x.shape
+  F, C, HH, WW = w.shape
+  pad, stride = conv_param['pad'], conv_param['stride']
+  x_stretched = im2col_indices(x, HH, WW, padding=pad, stride=stride)
+  single_dw_stetched = np.sum(x_stretched, axis=1)
+  single_dw_shape = (1, C, HH, WW)
+  single_dw = col2im_indices(single_dw_stretched, single_dw_shape, 
+                             field_height=HH, field_width=WW, padding=0, 
+                             stride=1)
+  dw = np.tile(single_dw, (F, 1, 1, 1))
+  db = dout
+  #dx = 
+  
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -203,7 +217,14 @@ def max_pool_forward_naive(x, pool_param):
   #############################################################################
   # TODO: Implement the max pooling forward pass                              #
   #############################################################################
-  pass
+  pool_height, pool_width, stride = (pool_param['pool_height'], 
+                                     pool_param['pool_width'], 
+                                     pool_param['stride'])
+  N, C, H, W = x.shape
+  x_stretched = im2col_indices(x, pool_height, pool_width, 
+                               padding=0, stride=stride)
+
+
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
