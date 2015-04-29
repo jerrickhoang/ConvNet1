@@ -2,3 +2,6 @@
 *.pyc
 .env/*
 cs231n/datasets/cifar-10-batches-py
+cs231n/datasets/tiny-imagenet-100-A
+cs231n/datasets/tiny-imagenet-100-B
+

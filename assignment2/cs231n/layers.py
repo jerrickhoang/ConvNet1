@@ -173,28 +173,20 @@ def conv_backward_naive(dout, cache):
   - dw: Gradient with respect to w
   - db: Gradient with respect to b
   """
-  dx, dw, db = None, None, None
-  #############################################################################
-  # TODO: Implement the convolutional backward pass.                          #
-  #############################################################################
   x, w, b, conv_param = cache
   N, C, H, W = x.shape
   F, C, HH, WW = w.shape
   pad, stride = conv_param['pad'], conv_param['stride']
   x_stretched = im2col_indices(x, HH, WW, padding=pad, stride=stride)
-  single_dw_stetched = np.sum(x_stretched, axis=1)
-  single_dw_shape = (1, C, HH, WW)
-  single_dw = col2im_indices(single_dw_stretched, single_dw_shape, 
-                             field_height=HH, field_width=WW, padding=0, 
-                             stride=1)
-  dw = np.tile(single_dw, (F, 1, 1, 1))
-  db = dout
-  #dx = 
-  
-  
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
+  w_stretched = im2col_indices(w, HH, WW, padding=0, stride=1)
+  dout_stretched = im2col_indices(dout, 1, 1, padding=0, stride=1)
+  dw_stretched = x_stretched.dot(dout_stretched.T)
+  dx_stretched = w_stretched.dot(dout_stretched)
+  dw = col2im_indices(dw_stretched, w.shape, field_height=1, field_width=1,
+                      padding=0, stride=1)
+  db = np.sum(dout_stretched, axis=1)
+  dx = col2im_indices(dx_stretched, x.shape, field_height=HH, field_width=WW,
+                      padding=pad, stride=stride)
   return dx, dw, db
 
 
