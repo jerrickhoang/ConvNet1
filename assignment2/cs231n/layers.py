@@ -206,20 +206,21 @@ def max_pool_forward_naive(x, pool_param):
   - cache: (x, pool_param)
   """
   out = None
-  #############################################################################
-  # TODO: Implement the max pooling forward pass                              #
-  #############################################################################
   pool_height, pool_width, stride = (pool_param['pool_height'], 
                                      pool_param['pool_width'], 
                                      pool_param['stride'])
   N, C, H, W = x.shape
+  pool_surface = pool_width * pool_height
   x_stretched = im2col_indices(x, pool_height, pool_width, 
                                padding=0, stride=stride)
+  h, w = x_stretched.shape
+  x_stretched_layer = x_stretched.T.reshape(-1, pool_surface)
+  out_stretched = np.amax(x_stretched_layer, axis=1)
+  out_stretched = out_stretched.reshape(-1, h/pool_surface)
+  out_shape = (N, C, (H-pool_height)/stride + 1, (W-pool_width)/stride + 1)
+  out = col2im_indices(out_stretched.T, out_shape, field_height=1, 
+                       field_width=1, padding=0, stride=1)
 
-
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
   cache = (x, pool_param)
   return out, cache
 
