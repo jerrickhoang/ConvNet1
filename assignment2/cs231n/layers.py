@@ -205,7 +205,6 @@ def max_pool_forward_naive(x, pool_param):
   - out: Output data
   - cache: (x, pool_param)
   """
-  out = None
   pool_height, pool_width, stride = (pool_param['pool_height'], 
                                      pool_param['pool_width'], 
                                      pool_param['stride'])
@@ -224,7 +223,6 @@ def max_pool_forward_naive(x, pool_param):
   cache = (x, pool_param)
   return out, cache
 
-
 def max_pool_backward_naive(dout, cache):
   """
   A naive implementation of the backward pass for a max pooling layer.
@@ -236,14 +234,24 @@ def max_pool_backward_naive(dout, cache):
   Returns:
   - dx: Gradient with respect to x
   """
-  dx = None
-  #############################################################################
-  # TODO: Implement the max pooling backward pass                             #
-  #############################################################################
-  pass
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
+  x, pool_param = cache
+  pool_height, pool_width, stride = (pool_param['pool_height'], 
+                                     pool_param['pool_width'], 
+                                     pool_param['stride'])
+  N, C, H, W = x.shape
+  pool_surface = pool_width * pool_height
+  x_stretched = im2col_indices(x, pool_height, pool_width, 
+                               padding=0, stride=stride)
+  h, w = x_stretched.shape
+  x_stretched_layer = x_stretched.T.reshape(-1, pool_surface)
+  mask = np.argmax(x_stretched_layer, axis=1)
+  dout_stretched = im2col_indices(dout, 1, 1, padding=0, stride=1)
+  dx_stretched = np.zeros_like(x_stretched_layer)
+  dx_stretched[np.arange(dx_stretched.shape[0]), mask] += (
+                                                   dout_stretched.T.flatten())
+  dx_stretched = dx_stretched.reshape(x_stretched.T.shape)
+  dx = col2im_indices(dx_stretched.T, x.shape, field_height=pool_height,
+                      field_width=pool_width, padding=0, stride=stride)
   return dx
 
 
